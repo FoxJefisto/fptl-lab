@@ -1,0 +1,24 @@
+Scheme MonteCarlo
+{
+    N = [1];
+    @ = (N.integrate.[2] * N.toReal).div.print;
+
+    Fun integrate
+    {
+        N =  [1];
+        @ = (N * 0).equal -> (0 * 0.0), ((N * 1).sub * ((rand * rand).f * (N * 1).sub.integrate.[2]).add);
+    }
+
+    Fun f   
+    {
+        x = [1];
+        y = [2];
+        x3 = ((x * x).mul * x).mul;
+        x3y = (x3 * y).mul;
+        y2 = (y * y).mul;
+        @ = ((10.0 * x3y).mul * y2).add;
+    }
+}
+
+Application
+% MonteCarlo(10000000)

@@ -1,0 +1,42 @@
+Data List['t]
+{
+List = c_nil ++ 't * List['t].c_cons;
+}
+Scheme MatrixMult
+{
+GraphSize = 50;
+Lst = (GraphSize * GraphSize).RandomMatrix(10, 0);
+Lst1 = (GraphSize * GraphSize).RandomMatrix(10, 0);
+@=(Lst * GraphSize *GraphSize * Lst1 * GraphSize * GraphSize * 
+0 * 0).matrixMult;
+ Fun RandomMatrix[Max, Min]
+{
+Fun RandomList[Max, Min]
+{
+@ = (id * 0).equal -> c_nil, ((Min * (rand * (Max * 
+Min).sub).mul).add * (id * 
+1).sub.RandomList).c_cons; 
+}
+TmpMax = Max;
+TmpMin = Min;
+@ = ([1] * 0).equal -> c_nil, ([2].RandomList(TmpMax, 
+TmpMin)* (([1] * 1).sub * [2]).RandomMatrix).c_cons; 
+}
+/// matrixMult: возвращает результат умножения двух матриц
+// [1]: матрица
+// [2]: количество строчек матрицы [1]
+// [3]: количество столбцов матрицы [1]
+// [4]: матрица
+// [5]: количество строчек матрицы [2]
+// [6]: количество столбцов матрицы [2]
+// [7]: номер текущей строки
+// [8]: номер текущего столбца
+// -> [1]: выходная матрица
+matrixMult = ([7] * [2]).equal -> c_nil, (rowMult * ([1] *[2] 
+*[3] *[4] *[5]* [6] * ([7] * 1).add * 0).matrixMult).c_cons;
+/// rowMult: возвращает строку (список) результирующей матрицы
+// [1]..[8]: 
+// -> [1]: строка результирующей матрицы
+rowMult = ([8] * [6]).equal -> c_nil, ((id * 0).elemSum * ([1] 
+*[2] *[3] *[4] *[5]* [6] * [7] * ([8] * 
+1).add).rowMult.[1]).c_cons;
