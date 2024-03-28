@@ -1,60 +1,481 @@
-Scheme RandomMatrixToFile
+Scheme Strassen
 {
-	Name = ([1].toString * "x" * [2].toString * "_GeneratedRandomMatrix.txt").add;
-	@ = (([1] * [2] * 1 * 0).RandMatrix * Name).createFile;
-	Fun RandMatrix
-	{
-		n = [1];
-		m = [2];
-		k = [3];
-		b = [4];
-	
-		@ = (m * k * b * (n * (m * 0.0).arrayCreate).arrayCreate * n).MatrGen;		
-		
-		Fun MatrGen
-		{
-			m = [1];
-			k = [2];
-			b = [3];
-			Matr = [4];
-			index = ([5] * 1).sub;
-			
-			@ = (index * 0).gequal -> 
-					(	m * 
-						k * 
-						b * 
-						(Matr * index * (m * k * b).RandArray).arraySet * 
-						index
-					).MatrGen,
-					Matr;
-		}
-		
-		Fun RandArray
-		{
-			m = [1];
-			k = [2];
-			b = [3];
-			
-			@ = (k * b * (m * 0.0).arrayCreate * m).ArrGen;
-		
-			Fun ArrGen
-			{
-				k = [1].toReal;
-				b = [2].toReal;				
-				Arr = [3];
-				index = ([4] * 1).sub;
-				
-				@ = (index * 0).gequal -> 
-						(	k *
-							b * 
-							(Arr * index * ((rand * k).mul * b).add).arraySet * 
-							index
-						).ArrGen,
-						Arr;
-			}		
-		}
-	}
+    n = [1];
+    matrix_1 = (n * n * 2).CreateMatrix;
+    matrix_2 = (n * n * 5).CreateMatrix;
+
+    @ = (n * matrix_1 * matrix_2).StrassenImp.printLine;
+
+    Fun StrassenImp
+    {
+        n = [1];
+        matrix_1 = [2];
+        matrix_2 = [3];
+    
+        m = (n * 2).div;
+        a = (matrix_1 * 0 * 0 * m * m).SliceMatrix;
+        b = (matrix_1 * 0 * m * m * m).SliceMatrix;
+        c = (matrix_1 * m * 0 * m * m).SliceMatrix;
+        d = (matrix_1 * m * m * m * m).SliceMatrix;
+        e = (matrix_2 * 0 * 0 * m * m).SliceMatrix;
+        f = (matrix_2 * 0 * m * m * m).SliceMatrix;
+        g = (matrix_2 * m * 0 * m * m).SliceMatrix;
+        h = (matrix_2 * m * m * m * m).SliceMatrix;
+
+        bds = (b * d).SubMatrix;
+        gha = (g * h).SumMatrix;
+        m1 = (m * bds * gha).StrassenImp;
+        ada = (a * d).SumMatrix;
+        eha = (e * h).SumMatrix;
+        m2 = (m * ada * eha).StrassenImp;
+        acs = (a * c).SubMatrix;
+        efa = (e * f).SumMatrix;
+        m3 = (m * acs * efa).StrassenImp;
+        aba = (a * b).SumMatrix;
+        m4 = (m * aba * h).StrassenImp;
+        fhs = (f * h).SubMatrix;
+        m5 = (m * a * fhs).StrassenImp;
+        ges = (g * e).SubMatrix;
+        m6 = (m * d * ges).StrassenImp;
+        cda = (c * d).SumMatrix;
+        m7 = (m * cda * e).StrassenImp;
+        s1s2a = (m1 * m2).SumMatrix;
+        s6s4s = (m6 * m4).SubMatrix;
+        c11 = (s1s2a * s6s4s).SumMatrix;
+        c12 = (m4 * m5).SumMatrix;
+        c21 = (m6 * m7).SumMatrix;
+        s2s3s = (m2 * m3).SubMatrix;
+        s5s7s = (m5 * m7).SubMatrix;
+        c22 = (s2s3s * s5s7s).SumMatrix;
+
+        @ = (n * 32).lequal->
+        (matrix_1 * matrix_2).MulMatrix,
+        (c11 * c12 * c21 * c22).CombineMatrix;
+    }
+
+    Fun CombineMatrix
+    {
+        matrix_11 = [1];
+        matrix_12 = [2];
+        matrix_21 = [3];
+        matrix_22 = [4];
+
+        @ = ((matrix_11 * matrix_12).CombineMatrixHorizontal * (matrix_21 * matrix_22).CombineMatrixHorizontal).CombineMatrixVertical;
+    }
+
+    Fun CombineMatrixVertical
+    {
+        matrix_1 = [1];
+        matrix_2 = [2];
+
+        rows = (matrix_1.arrayLen * matrix_2.arrayLen).add;
+        cols = matrix_1.arrayLen;
+        result_matrix = (rows * cols * 0).CreateMatrix;
+
+        @ = (0 * matrix_1 * matrix_2 * result_matrix).CombineMatrixVerticalImp;
+
+        Fun CombineMatrixVerticalImp
+        {
+            index = [1];
+            matrix_1 = [2];
+            matrix_2 = [3];
+            result_matrix = [4];
+
+            size_row_1 = matrix_1.arrayLen;
+            size_row_2 = matrix_2.arrayLen;
+            size_row_result = (size_row_1 * size_row_2).add;
+            index_2 = (index * size_row_1).mod;
+            cur_array_1 = (matrix_1 * index).arrayGet;
+            cur_array_2 = (matrix_2 * index_2).arrayGet;
+            fillMatrix = (index * size_row_1).less->
+                (
+                    (index * 1).add * matrix_1 * matrix_2 * (result_matrix * index * cur_array_1).arraySet
+                ).CombineMatrixVerticalImp,
+                (
+                    (index * 1).add * matrix_1 * matrix_2 * (result_matrix * index * cur_array_2).arraySet
+                ).CombineMatrixVerticalImp;
+            
+            @ = (index * size_row_result).less->
+                fillMatrix,
+                result_matrix;
+        }
+    }
+
+    Fun CombineMatrixHorizontal
+    {
+        matrix_1 = [1];
+        matrix_2 = [2];
+
+        rows = matrix_1.arrayLen;
+        matrix_1_cols = (matrix_1 * 0).arrayGet.arrayLen;
+        matrix_2_cols = (matrix_2 * 0).arrayGet.arrayLen;
+        cols = (matrix_1_cols * matrix_2_cols).add;
+        result_matrix = (rows * cols * 0).CreateMatrix;
+
+        @ = (0 * matrix_1 * matrix_2 * result_matrix).CombineMatrixHorizontalImp;
+
+        Fun CombineMatrixHorizontalImp
+        {
+            index = [1];
+            matrix_1 = [2];
+            matrix_2 = [3];
+
+            row_size = matrix_1.arrayLen;
+            result_matrix = [4];
+            cur_array_1 = (matrix_1 * index).arrayGet;
+            cur_array_2 = (matrix_2 * index).arrayGet;
+            result_array = (cur_array_1 * cur_array_2).CombineArrayHorizontal;
+
+            @ = (index * row_size).less->
+                (
+                    (index * 1).add * matrix_1 * matrix_2 * (result_matrix * index * result_array).arraySet
+                ).CombineMatrixHorizontalImp,
+                result_matrix;
+        }
+
+        Fun CombineArrayHorizontal
+        {
+            array_1 = [1];
+            array_2 = [2];
+
+            size_1 = array_1.arrayLen;
+            size_2 = array_2.arrayLen;
+            size_result = (size_1 * size_2).add;
+            result_array = (size_result * 0).arrayCreate;
+
+            @ = (0 * array_1 * array_2 * result_array).CombineArrayHorizontalImp;
+
+            Fun CombineArrayHorizontalImp
+            {
+                index = [1];
+                array_1 = [2];
+                array_2 = [3];
+                result_array = [4];
+
+                size_1 = array_1.arrayLen;
+                size_2 = array_2.arrayLen;
+                size_result = result_array.arrayLen;
+                index_2 = (index * size_1).mod;
+                cur_1 = (array_1 * index).arrayGet; 
+                cur_2 = (array_2 * index_2).arrayGet; 
+                fillArray = (index * size_1).less->
+                    (
+                        (index * 1).add * array_1 * array_2 * (result_array * index * cur_1).arraySet
+                    ).CombineArrayHorizontalImp,
+                    (
+                        (index * 1).add * array_1 * array_2 * (result_array * index * cur_2).arraySet
+                    ).CombineArrayHorizontalImp;
+
+                @ = (index * size_result).less->
+                    fillArray,
+                    result_array;
+            }
+        }
+    }
+
+    Fun CreateMatrix
+    {
+        size_row = [1];
+        size_col = [2];
+        value = [3];
+
+        @ = (size_row * (size_col * value).arrayCreate).arrayCreate;
+    }
+
+    Fun SliceMatrix
+    {
+        source_matrix = [1];
+        offset_i = [2];
+        offset_j = [3];
+        size_row = [4];
+        size_col = [5];
+
+        result_matrix = (size_row * size_col * 0).CreateMatrix;
+        @ = (offset_i * 0 * offset_j * source_matrix * size_row * size_col * result_matrix).SliceMatrixImp;
+
+        Fun SliceMatrixImp
+        {
+            offset_i = [1];
+            copy_offset_i = [2];
+            offset_j = [3];
+            source_matrix = [4];
+            size_row = [5];
+            size_col = [6];
+            copy_matrix = [7];
+
+            f_array_slice = ((source_matrix * offset_i).arrayGet * offset_j * size_col).SliceArray;
+
+            @ = (copy_offset_i * size_row).less->
+                (
+                    (offset_i * 1).add * (copy_offset_i * 1).add * offset_j * source_matrix * size_row * size_col * (copy_matrix * copy_offset_i * f_array_slice).arraySet
+                ).SliceMatrixImp,
+            copy_matrix;
+        }
+
+        Fun SliceArray
+        {
+            source_array = [1];
+            offset = [2];
+            size = [3];
+
+            copy_array = (size * 0).arrayCreate;
+
+            @ = (offset * 0 * source_array * size * copy_array).SliceArrayImp;
+
+            Fun SliceArrayImp
+            {
+                source_index = [1];
+                copy_index = [2];
+                source_array = [3];
+                size = [4];
+                copy_array = [5];
+
+                @ = (copy_index * size).less->
+                    (
+                        (source_index * 1).add * (copy_index * 1).add * source_array * size * (copy_array * copy_index * (source_array * source_index).arrayGet).arraySet
+                    ).SliceArrayImp,
+                copy_array;
+            }
+        }
+    }
+
+    Fun SumMatrix
+    {
+        matrix_1 = [1];
+        matrix_2 = [2];
+        size_row = matrix_1.arrayLen;
+        size_col = (matrix_1 * 0).arrayGet.arrayLen;
+        result_matrix = (size_row * size_col * 0).CreateMatrix;
+
+        @ = (0 * matrix_1 * matrix_2 * result_matrix).SumMatrixImp;
+        
+        Fun SumMatrixImp
+        {
+            index = [1];
+            matrix_1 = [2];
+            matrix_2 = [3];
+            result_matrix = [4];
+
+            size_row = matrix_1.arrayLen;
+            array_1 = (matrix_1 * index).arrayGet;
+            array_2 = (matrix_2 * index).arrayGet;
+            result_array = (array_1 * array_2).SumArrays;
+
+            @ = (index * size_row).less->
+                (
+                    (index * 1).add * matrix_1 * matrix_2 * (result_matrix * index * result_array).arraySet
+                ).SumMatrixImp,
+            result_matrix;
+        }
+
+        Fun SumArrays
+        {
+            array_1 = [1];
+            array_2 = [2];
+
+            size = array_1.arrayLen;
+            result_array = (size * 0).arrayCreate;
+
+            @ = (0 * array_1 * array_2 * result_array).SumArraysImp;
+
+            Fun SumArraysImp
+            {
+                index = [1];
+                array_1 = [2];
+                array_2 = [3];
+                result_array = [4];
+
+                size = array_1.arrayLen;
+                cur_1 = (array_1 * index).arrayGet;
+                cur_2 = (array_2 * index).arrayGet;
+                sum_curs = (cur_1 * cur_2).add;
+
+                @ = (index * size).less->
+                    (
+                        (index * 1).add * array_1 * array_2 * (result_array * index * sum_curs).arraySet
+                    ).SumArraysImp,
+                result_array;
+            }
+        }
+    }
+
+    Fun SubMatrix
+    {
+        matrix_1 = [1];
+        matrix_2 = [2];
+
+        size_row = matrix_1.arrayLen;
+        size_col = (matrix_1 * 0).arrayGet.arrayLen;
+        result_matrix = (size_row * size_col * 0).CreateMatrix;
+
+        @ = (0 * matrix_1 * matrix_2 * result_matrix).SubMatrixImp;
+        
+        Fun SubMatrixImp
+        {
+            index = [1];
+            matrix_1 = [2];
+            matrix_2 = [3];
+            result_matrix = [4];
+
+            size_row = matrix_1.arrayLen;
+            array_1 = (matrix_1 * index).arrayGet;
+            array_2 = (matrix_2 * index).arrayGet;
+            result_array = (array_1 * array_2).SubArrays;
+
+            @ = (index * size_row).less->
+                (
+                    (index * 1).add * matrix_1 * matrix_2 * (result_matrix * index * result_array).arraySet
+                ).SubMatrixImp,
+            result_matrix;
+        }
+
+        Fun SubArrays
+        {
+            array_1 = [1];
+            array_2 = [2];
+
+            size = array_1.arrayLen;
+            result_array = (size * 0).arrayCreate;
+
+            @ = (0 * array_1 * array_2 * result_array).SubArraysImp;
+
+            Fun SubArraysImp
+            {
+                index = [1];
+                array_1 = [2];
+                array_2 = [3];
+                result_array = [4];
+
+                size = array_1.arrayLen;
+                cur_1 = (array_1 * index).arrayGet;
+                cur_2 = (array_2 * index).arrayGet;
+                sub_curs = (cur_1 * cur_2).sub;
+                @ = (index * size).less->
+                    (
+                        (index * 1).add * array_1 * array_2 * (result_array * index * sub_curs).arraySet
+                    ).SubArraysImp,
+                result_array;
+            }
+        }
+    }
+
+    Fun MulMatrix
+    {
+        matrix_1 = [1];
+        matrix_2 = [2];
+
+        size_row = matrix_1.arrayLen;
+        size_col = (matrix_1 * 0).arrayGet.arrayLen;
+        result_matrix = (size_row * size_col * 0).CreateMatrix;
+
+        @ = (0 * matrix_1 * matrix_2 * result_matrix).MulMatrixImp;
+    }
+
+    Fun MulMatrixImp
+    {
+        index = [1];
+        matrix_1 = [2];
+        matrix_2 = [3];
+        result_matrix = [4];
+
+        cur_row_array = (matrix_1 * index).arrayGet;
+        size_row = matrix_1.arrayLen;
+        result_mul_row = (cur_row_array * matrix_2).MulRowInMatrix;
+
+        @ = (index * size_row).less->
+            (
+                (index * 1).add * matrix_1 * matrix_2 * (result_matrix * index * result_mul_row).arraySet
+            ).MulMatrixImp,
+            result_matrix;
+    }
+
+    Fun MulRowInMatrix
+    {
+        row_array = [1];
+        matrix = [2];
+
+        row_size = (row_array).arrayLen;
+        result_row = (row_size * 0).arrayCreate;
+
+        @ = (0 * row_array * matrix * result_row).MulRowInMatrixImp;
+    }
+
+    Fun MulRowInMatrixImp
+    {
+        index = [1];
+        row_array = [2];
+        matrix = [3];
+        result_row = [4];
+
+        size_row = row_array.arrayLen;
+        size_col = (matrix * 0).arrayGet.arrayLen;
+        column_array = (matrix * 0 * index * size_row * 1).SliceMatrix.TransposeColumn;
+        mul_result_array = (row_array * column_array).MulArrays;
+        mul_result = mul_result_array.arraySum;
+        
+        @ = (index * size_col).less->
+            (
+                (index * 1).add * row_array * matrix * (result_row * index * mul_result).arraySet
+            ).MulRowInMatrixImp,
+            result_row;
+    }
+
+    Fun MulArrays
+    {
+        array_1 = [1];
+        array_2 = [2];
+
+        size = array_1.arrayLen;
+        result_array = (size * 0).arrayCreate;
+        
+        @ = (0 * array_1 * array_2 * result_array).MulArraysImp;
+
+        Fun MulArraysImp
+        {
+            index = [1];
+            array_1 = [2];
+            array_2 = [3];
+            result_array = [4];
+
+            size = array_1.arrayLen;
+            cur_1 = (array_1 * index).arrayGet;
+            cur_2 = (array_2 * index).arrayGet;
+            mul_curs = (cur_1 * cur_2).mul;
+
+            @ = (index * size).less->
+                (
+                    (index * 1).add * array_1 * array_2 * (result_array * index * mul_curs).arraySet
+                ).MulArraysImp,
+                result_array;
+        }
+    }
+
+    Fun TransposeColumn
+    {
+        array_col = [1];
+
+        array_size = array_col.arrayLen;
+        result_array = (array_size * 0).arrayCreate;
+        
+        @ = (0 * array_col * result_array).TransposeColumnImp;
+        
+        Fun TransposeColumnImp
+        {
+            index = [1];
+            array_col = [2];
+            result_array = [3];
+
+            cur = ((array_col * index).arrayGet * 0).arrayGet;
+            size = result_array.arrayLen;
+            
+            @ = (index * size).less->
+                (
+                    (index * 1).add * array_col * (result_array * index * cur).arraySet
+                ).TransposeColumnImp,
+                result_array;
+        }
+    }
 }
-	
+
 Application
-%RandomMatrixToFile(10, 10)
+% Strassen(32)
