@@ -1,10 +1,11 @@
 Scheme Strassen
 {
     n = [1];
+
     matrix_1 = (n * n * 2).CreateMatrix;
     matrix_2 = (n * n * 5).CreateMatrix;
 
-    @ = (n * matrix_1 * matrix_2).StrassenImp.printLine;
+    @ = (n * matrix_1 * matrix_2).StrassenImp;
 
     Fun StrassenImp
     {
@@ -119,9 +120,9 @@ Scheme Strassen
             index = [1];
             matrix_1 = [2];
             matrix_2 = [3];
+            result_matrix = [4];
 
             row_size = matrix_1.arrayLen;
-            result_matrix = [4];
             cur_array_1 = (matrix_1 * index).arrayGet;
             cur_array_2 = (matrix_2 * index).arrayGet;
             result_array = (cur_array_1 * cur_array_2).CombineArrayHorizontal;
@@ -478,4 +479,4 @@ Scheme Strassen
 }
 
 Application
-% Strassen(32)
+% Strassen(256)
